@@ -413,6 +413,10 @@ function run(settings){
         border-top: solid #a0a0a073 1px !important;
         border-bottom: solid #a0a0a073 1px !important;
         border-radius: 4px 4px 0 0;
+        background-color: white;
+    }
+    .column_bar.auto_reload_active {
+        background-color: lightblue;
     }
     .dsp_column_title{
         width: auto;
@@ -605,6 +609,12 @@ function run(settings){
         & .dsp_column_draggable_true,
         & .dsp_column_title {
             background-color: #2e2e2e !important;
+        }
+        & .column_bar {
+            background-color: #2e2e2e !important;
+        }
+        & .column_bar.auto_reload_active {
+            background-color: #1e4f8a !important;
         }
 
         & .dsp_btn_add_post_img,
@@ -1203,9 +1213,22 @@ function run(settings){
                         //Home, Exproleカラムホバー中 自動更新上部遷移停止
                         opd_column_div.querySelector("iframe").addEventListener("mouseover", function(){
                             this.setAttribute("auto_reload_mouse_hover", "true");
+                            this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                         });
                         opd_column_div.querySelector("iframe").addEventListener("mouseleave", function(){
                             this.setAttribute("auto_reload_mouse_hover", "false");
+                            if (this.contentWindow.scrollY === 0) {
+                                this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
+                            }
+                        });
+                        opd_column_div.querySelector("iframe").contentWindow.addEventListener("scroll", function(){
+                            //console.log("scroll = " + this.scrollY);
+                            if (this.scrollY === 0) {
+                                this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
+                            } else {
+                                // TODO: this could be a performance issue
+                                this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
+                            }
                         });
                         const auto_reload_target_elem = this;
                         //console.log(opd_column_auto_reload_checkbox)
