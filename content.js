@@ -1232,8 +1232,15 @@ function run(settings){
                                 //console.log("update!")
                                 //console.log(auto_reload_target_elem.contentWindow)
                                 const path_name = auto_reload_target_elem.contentWindow.location.pathname;
+                                let active = document.activeElement;
+                                if (active && active.tagName === "IFRAME") {
+                                    active = active.contentDocument.activeElement;
+                                }
+                                //console.log("active = " + active);
                                 if(['/home', '/search'].includes(path_name) || path_name.startsWith('/i/lists')){
-                                    if(auto_reload_target_elem.getAttribute("auto_reload_mouse_hover") == "false"){
+                                    if ((auto_reload_target_elem.getAttribute("auto_reload_mouse_hover") == "false")
+                                        && (auto_reload_target_elem.contentWindow.scrollY === 0)
+                                        && !active.matches('[role="textbox"], input[type="text"]') ) {
                                         if (column_content_reload){
                                             column_content_reload.Reload(auto_reload_target_elem.contentWindow);
                                             setTimeout(() => {
