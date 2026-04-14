@@ -1221,12 +1221,13 @@ function run(settings){
                                 this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
                             }
                         });
-                        opd_column_div.querySelector("iframe").contentWindow.addEventListener("scroll", function(){
+                        opd_column_div.querySelector("iframe").contentWindow.addEventListener("scrollend", function(){
                             //console.log("scroll = " + this.scrollY);
-                            if (this.scrollY === 0) {
+                            if ((this.scrollY === 0)
+				&& (this.frameElement.getAttribute("auto_reload_mouse_hover") == "false")) {
+				// do not re-activate auto reload if it's still mouseover'ed
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
                             } else {
-                                // TODO: this could be a performance issue
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                             }
                         });
