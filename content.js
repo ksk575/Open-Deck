@@ -1213,11 +1213,13 @@ function run(settings){
                         //Home, Exproleカラムホバー中 自動更新上部遷移停止
                         opd_column_div.querySelector("iframe").addEventListener("mouseover", function(){
                             this.setAttribute("auto_reload_mouse_hover", "true");
+                            this.removeAttribute("auto_reload_active");
                             this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                         });
                         opd_column_div.querySelector("iframe").addEventListener("mouseleave", function(){
                             this.setAttribute("auto_reload_mouse_hover", "false");
                             if (this.contentWindow.scrollY === 0) {
+				this.setAttribute("auto_reload_active", "");
                                 this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
                             }
                         });
@@ -1225,9 +1227,12 @@ function run(settings){
                             //console.log("scroll = " + this.scrollY);
                             if ((this.scrollY === 0)
 				&& (this.frameElement.getAttribute("auto_reload_mouse_hover") == "false")) {
+				// re-activate auto reload only when mouseleave'ed
 				// do not re-activate auto reload if it's still mouseover'ed
+				this.frameElement.setAttribute("auto_reload_active", "");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
                             } else {
+				this.frameElement.removeAttribute("auto_reload_active");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                             }
                         });
@@ -1262,8 +1267,7 @@ function run(settings){
                                 }
                                 //console.log("active = " + active);
                                 if(['/home', '/search'].includes(path_name) || path_name.startsWith('/i/lists')){
-                                    if ((auto_reload_target_elem.getAttribute("auto_reload_mouse_hover") == "false")
-                                        && (auto_reload_target_elem.contentWindow.scrollY === 0)
+                                    if (auto_reload_target_elem.hasAttribute("auto_reload_active")
                                         && !active.matches('[role="textbox"], input[type="text"]') ) {
                                         if (column_content_reload){
                                             column_content_reload.Reload(auto_reload_target_elem.contentWindow);
