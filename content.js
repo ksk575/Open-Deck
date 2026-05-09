@@ -1273,7 +1273,7 @@ function run(settings){
                                             column_content_reload.Reload(auto_reload_target_elem.contentWindow);
                                             setTimeout(() => {
                                                 auto_reload_target_elem.contentWindow.scrollTo({ top: 0, behavior: 'auto' });
-                                            }, 100);
+                                            }, 1000);
                                         }
                                     }
                                 };
