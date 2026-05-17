@@ -1231,7 +1231,8 @@ function run(settings){
 				// do not re-activate auto reload if it's still mouseover'ed
 				this.frameElement.setAttribute("auto_reload_active", "");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
-                            } else {
+                            } else if(this.frameElement.closest("div[opd_column_type]").getAttribute("opd_column_type") == "home"){
+				// inactivate auto reload when scrolled on Timeline column
 				this.frameElement.removeAttribute("auto_reload_active");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                             }
