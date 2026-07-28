@@ -1209,34 +1209,37 @@ function run(settings){
                     //自動更新初期適用
                     let reload_test = 0;
                     let auto_reload_int = null;//チェックボックスイベントにも再利用
+		    let auto_reload_last_article;
                     if(opd_column_auto_reload_checkbox != null){
                         //Home, Exproleカラムホバー中 自動更新上部遷移停止
                         opd_column_div.querySelector("iframe").addEventListener("mouseover", function(){
                             this.setAttribute("auto_reload_mouse_hover", "true");
-                            this.removeAttribute("auto_reload_active");
-                            this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
                         });
                         opd_column_div.querySelector("iframe").addEventListener("mouseleave", function(){
                             this.setAttribute("auto_reload_mouse_hover", "false");
-                            if (this.contentWindow.scrollY === 0) {
-				this.setAttribute("auto_reload_active", "");
-                                this.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
-                            }
                         });
                         opd_column_div.querySelector("iframe").contentWindow.addEventListener("scrollend", function(){
-                            //console.log("scroll = " + this.scrollY);
-                            if ((this.scrollY === 0)
-				&& (this.frameElement.getAttribute("auto_reload_mouse_hover") == "false")) {
-				// re-activate auto reload only when mouseleave'ed
-				// do not re-activate auto reload if it's still mouseover'ed
+			    const column_type = this.frameElement.closest("div[opd_column_type]").getAttribute("opd_column_type"); // for debug
+			    const article_elem = this.document.querySelector('section[role="region"] > div > div > div:first-child article');
+			    //const article_id = article_elem?.getAttribute("aria-labelledby");
+			    const article_id = article_elem?.getAttribute("aria-labelledby")?.split(" ")?.[0];
+			    console.log(`scroll:${this.scrollY}, type:${column_type}, last:${auto_reload_last_article}, current:${article_id}`); // for debug
+
+                            if (this.scrollY === 0) {
+				auto_reload_last_article = article_id;
+				console.log(`autoload enabled: ${column_type}:${article_id}`); // for debug
 				this.frameElement.setAttribute("auto_reload_active", "");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", true);
-                            } else if(this.frameElement.closest("div[opd_column_type]").getAttribute("opd_column_type") == "home"){
+                            } else if (auto_reload_last_article === article_id) {
+				console.log(`autoload disabled: ${column_type}:${article_id}`); // for debug
 				// inactivate auto reload when scrolled on Timeline column
 				this.frameElement.removeAttribute("auto_reload_active");
                                 this.frameElement.closest('div[opd_column_type]').querySelector(".column_bar").classList.toggle("auto_reload_active", false);
+			    } else {
+				console.log(`autoload preserved: ${this.frameElement.hasAttribute("auto_reload_active")}`); // for debug
                             }
                         });
+
                         const auto_reload_target_elem = this;
                         //console.log(opd_column_auto_reload_checkbox)
                         if(mode != "session_set"){
